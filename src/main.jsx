@@ -6,6 +6,7 @@ import { ForbiddenError, UnauthorizedError } from "./errors";
 import { router } from "./router";
 import { render } from "./render";
 
+// 라우터 초기화
 router.set(
   createRouter({
     "/": HomePage,
@@ -27,10 +28,12 @@ router.set(
 );
 
 function main() {
+  // 초기 렌더링
+  render();
+
+  // 라우터와 스토어 변경 구독
   router.get().subscribe(render);
   globalStore.subscribe(render);
-
-  render();
 }
 
 main();

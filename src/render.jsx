@@ -10,6 +10,7 @@ export function render() {
   const $root = document.querySelector("#root");
 
   try {
+    $root.innerHTML = "";
     renderElement(<Page />, $root);
   } catch (error) {
     if (error instanceof ForbiddenError) {

@@ -2,6 +2,7 @@
 import { createVNode } from "../lib";
 import { globalStore } from "../stores";
 import { userStorage } from "../storages";
+import { router } from "../router";
 
 function login(username) {
   const user = { username, email: "", bio: "" };
@@ -10,13 +11,17 @@ function login(username) {
     loggedIn: true,
   });
   userStorage.set(user);
+  router.get().push("/");
 }
 
 export const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value;
-    login(username);
+    const usernameInput = document.getElementById("username");
+    if (usernameInput) {
+      const username = usernameInput.value;
+      login(username);
+    }
   };
 
   return (
@@ -29,15 +34,19 @@ export const LoginPage = () => {
           <input
             type="text"
             id="username"
+            name="username"
             placeholder="사용자 이름"
             className="w-full p-2 mb-4 border rounded"
             required
+            disabled={false}
           />
           <input
             type="password"
+            name="password"
             placeholder="비밀번호"
             className="w-full p-2 mb-6 border rounded"
             required
+            disabled={false}
           />
           <button
             type="submit"

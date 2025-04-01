@@ -11,7 +11,7 @@ export function normalizeVNode(vNode) {
 
   // 3. 함수 타입 처리 (컴포넌트)
   if (typeof vNode.type === "function") {
-    const result = vNode.type(vNode.props);
+    const result = vNode.type(vNode.props || {});
     return normalizeVNode(result);
   }
 

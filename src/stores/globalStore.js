@@ -50,8 +50,12 @@ export const globalStore = createStore(
   },
   {
     logout(state) {
-      userStorage.reset();
-      return { ...state, currentUser: null, loggedIn: false };
+      userStorage.remove();
+      return {
+        ...state,
+        currentUser: null,
+        loggedIn: false,
+      };
     },
   },
 );

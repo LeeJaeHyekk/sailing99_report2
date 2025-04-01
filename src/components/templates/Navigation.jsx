@@ -24,6 +24,13 @@ function Link({ onClick, children, ...props }) {
 export const Navigation = () => {
   const { loggedIn } = globalStore.getState();
   const { logout } = globalStore.actions;
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+    router.get().push("/login");
+  };
+
   return (
     <nav className="bg-white shadow-md p-2 sticky top-14">
       <ul className="flex justify-around">
@@ -52,10 +59,7 @@ export const Navigation = () => {
               href="#"
               id="logout"
               className="text-gray-600"
-              onClick={(e) => {
-                e.preventDefault();
-                logout();
-              }}
+              onClick={handleLogout}
             >
               로그아웃
             </a>
