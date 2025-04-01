@@ -49,8 +49,15 @@ export const globalStore = createStore(
     error: null,
   },
   {
+    setState(state, newState) {
+      return {
+        ...state,
+        ...newState,
+      };
+    },
     logout(state) {
       userStorage.remove();
+      localStorage.removeItem("user");
       return {
         ...state,
         currentUser: null,

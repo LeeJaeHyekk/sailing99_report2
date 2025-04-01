@@ -3,6 +3,7 @@ import { createVNode } from "../lib";
 import { Footer, Header, Navigation } from "../components";
 import { globalStore } from "../stores";
 import { userStorage } from "../storages";
+import { router } from "../router";
 
 function updateProfile(profile) {
   const user = { ...globalStore.getState().currentUser, ...profile };
@@ -22,6 +23,25 @@ export const ProfilePage = () => {
     updateProfile(updatedProfile);
   };
 
+  if (!loggedIn) {
+    return (
+      <div className="bg-gray-100 flex items-center justify-center min-h-screen">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+          <h1 className="text-2xl font-bold text-center text-blue-600 mb-8">
+            항해플러스
+          </h1>
+          <p className="text-center mb-4">로그인이 필요한 서비스입니다.</p>
+          <button
+            onClick={() => router.get().push("/login")}
+            className="w-full bg-blue-600 text-white p-2 rounded"
+          >
+            로그인
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center">
       <div className="max-w-md w-full">
@@ -36,7 +56,7 @@ export const ProfilePage = () => {
             <form id="profile-form" onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label
-                  for="username"
+                  htmlFor="username"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   사용자 이름
@@ -46,13 +66,13 @@ export const ProfilePage = () => {
                   id="username"
                   name="username"
                   className="w-full p-2 border rounded"
-                  value={username}
+                  defaultValue={username}
                   required
                 />
               </div>
               <div className="mb-4">
                 <label
-                  for="email"
+                  htmlFor="email"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   이메일
@@ -62,13 +82,13 @@ export const ProfilePage = () => {
                   id="email"
                   name="email"
                   className="w-full p-2 border rounded"
-                  value={email}
+                  defaultValue={email}
                   required
                 />
               </div>
               <div className="mb-6">
                 <label
-                  for="bio"
+                  htmlFor="bio"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   자기소개
@@ -78,9 +98,8 @@ export const ProfilePage = () => {
                   name="bio"
                   rows="4"
                   className="w-full p-2 border rounded"
-                >
-                  {bio}
-                </textarea>
+                  defaultValue={bio}
+                />
               </div>
               <button
                 type="submit"

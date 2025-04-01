@@ -1,39 +1,22 @@
 // 이벤트 핸들러를 저장하기 위한 WeakMap
 const eventHandlerMap = new WeakMap();
 
-export function addEvent(element, eventType, handler) {
-  // 요소별 이벤트 핸들러 맵을 가져오거나 새로 생성
-  let handlers = eventHandlerMap.get(element) || {};
+// 이벤트 핸들러를 저장하기 위한 Map
+const eventHandlers = new Map();
 
-  // 이벤트 타입별 핸들러 배열을 가져오거나 새로 생성
-  if (!handlers[eventType]) {
-    handlers[eventType] = [];
-  }
-
-  // 핸들러가 이미 등록되어 있지 않은 경우에만 추가
-  if (!handlers[eventType].includes(handler)) {
-    handlers[eventType].push(handler);
-  }
-
-  // 핸들러 맵을 WeakMap에 저장
-  eventHandlerMap.set(element, handlers);
+export function addEvent($el, eventName, handler) {
+  $el.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    handler(e);
+  });
 }
 
 export function removeEvent(element, eventType, handler) {
-  const handlers = eventHandlerMap.get(element);
-
-  if (handlers && handlers[eventType]) {
-    // 핸들러 배열에서 특정 핸들러 제거
-    handlers[eventType] = handlers[eventType].filter((h) => h !== handler);
-
-    // 이벤트 타입에 핸들러가 없으면 해당 타입 삭제
-    if (handlers[eventType].length === 0) {
-      delete handlers[eventType];
-    }
-
-    // 요소에 등록된 핸들러가 없으면 WeakMap에서 제거
-    if (Object.keys(handlers).length === 0) {
-      eventHandlerMap.delete(element);
+  const elementHandlers = eventHandlers.get(element);
+  if (elementHandlers) {
+    const handlers = elementHandlers.get(eventType);
+    if (handlers) {
+      handlers.delete(handler);
     }
   }
 }
@@ -42,13 +25,20 @@ export function setupEventListeners(root) {
   // 이벤트 위임을 위한 이벤트 리스너
   const eventListener = (event) => {
     const target = event.target;
-    const handlers = eventHandlerMap.get(target);
+    let currentTarget = target;
 
-    if (handlers && handlers[event.type]) {
-      // 해당 이벤트 타입의 모든 핸들러 실행
-      handlers[event.type].forEach((handler) => {
-        handler(event);
-      });
+    while (currentTarget && currentTarget !== root) {
+      const handlers = eventHandlerMap.get(currentTarget);
+
+      if (handlers && handlers[event.type]) {
+        // 해당 이벤트 타입의 모든 핸들러 실행
+        handlers[event.type].forEach((handler) => {
+          handler(event);
+        });
+        break; // 이벤트가 처리되면 상위로 전파하지 않음
+      }
+
+      currentTarget = currentTarget.parentElement;
     }
   };
 

@@ -1,12 +1,20 @@
 /** @jsx createVNode */
 import { createRouter, createVNode } from "./lib";
-import { HomePage, LoginPage, ProfilePage } from "./pages";
+import { HomePage, LoginPage, ProfilePage, NotFoundPage } from "./pages";
 import { globalStore } from "./stores";
 import { ForbiddenError, UnauthorizedError } from "./errors";
 import { router } from "./router";
 import { render } from "./render";
 
-// 라우터 초기화
+const user = localStorage.getItem("user");
+if (user) {
+  const userData = JSON.parse(user);
+  globalStore.setState({
+    loggedIn: true,
+    currentUser: userData,
+  });
+}
+
 router.set(
   createRouter({
     "/": HomePage,
@@ -24,14 +32,12 @@ router.set(
       }
       return <ProfilePage />;
     },
+    "*": NotFoundPage,
   }),
 );
 
 function main() {
-  // 초기 렌더링
   render();
-
-  // 라우터와 스토어 변경 구독
   router.get().subscribe(render);
   globalStore.subscribe(render);
 }

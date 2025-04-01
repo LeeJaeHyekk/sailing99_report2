@@ -15,14 +15,24 @@ export function normalizeVNode(vNode) {
     return normalizeVNode(result);
   }
 
-  // 4. 일반 vNode 처리
+  // 4. 배열 처리
+  if (Array.isArray(vNode)) {
+    const normalizedChildren = vNode
+      .map((child) => normalizeVNode(child))
+      .filter((child) => child !== null && child !== undefined);
+    return normalizedChildren;
+  }
+
+  // 5. 일반 vNode 처리
   if (vNode.type && vNode.props) {
+    const normalizedChildren = (vNode.children || [])
+      .map((child) => normalizeVNode(child))
+      .filter((child) => child !== null && child !== undefined);
+
     return {
       type: vNode.type,
       props: vNode.props,
-      children: vNode.children
-        .map((child) => normalizeVNode(child))
-        .filter((child) => child !== null && child !== undefined),
+      children: normalizedChildren,
     };
   }
 

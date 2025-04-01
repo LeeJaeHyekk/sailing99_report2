@@ -5,7 +5,12 @@ import { userStorage } from "../storages";
 import { router } from "../router";
 
 function login(username) {
+  if (!username) return;
+
   const user = { username, email: "", bio: "" };
+  const userString = JSON.stringify(user);
+  localStorage.setItem("user", userString);
+
   globalStore.setState({
     currentUser: user,
     loggedIn: true,
@@ -17,9 +22,8 @@ function login(username) {
 export const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    const usernameInput = document.getElementById("username");
-    if (usernameInput) {
-      const username = usernameInput.value;
+    const username = document.getElementById("username").value;
+    if (username) {
       login(username);
     }
   };
@@ -34,19 +38,15 @@ export const LoginPage = () => {
           <input
             type="text"
             id="username"
-            name="username"
             placeholder="사용자 이름"
             className="w-full p-2 mb-4 border rounded"
             required
-            disabled={false}
           />
           <input
             type="password"
-            name="password"
             placeholder="비밀번호"
             className="w-full p-2 mb-6 border rounded"
             required
-            disabled={false}
           />
           <button
             type="submit"
